@@ -1,0 +1,17 @@
+#!/bin/bash
+display=$(xrandr -q | awk '/ connected/ {print $1}' | dmenu)
+if [ "$display" == "" ]; then
+    exit -1
+fi
+mode=$(printf "off\nleft-of\nright-of\nabove\nbelow\nsame-as" | dmenu)
+if [ "$mode" == "off" ]; then
+    xrandr --output $display --$mode
+elif [ "$mode" == "" ]; then
+    exit -1
+else
+    as=$(xrandr -q | grep -v $display | awk '/ connected/ {print $1}' | dmenu)
+    if [ "$as" == "" ]; then
+	exit -1
+    fi
+    xrandr --output $display --auto --$mode $as
+fi
